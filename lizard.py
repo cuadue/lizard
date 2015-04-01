@@ -95,13 +95,11 @@ def create_command_line_parser(prog=None):
                         action="append",
                         dest="exclude",
                         default=[])
-    parser.add_argument("-X", "--xml",
-                        help='''Generate XML in cppncss style instead of the
-                        tabular output. Useful to generate report in Jenkins
-                        server''',
-                        action="store_true",
-                        dest="xml",
-                        default=None)
+    parser.add_argument("-f", "--format",
+                        help='''The generated XML is in cppncss style,
+                        useful to generate report in Jenkins.''',
+                        choices = ['xml', 'json', 'text', 'html'],
+                        default='text')
     parser.add_argument("-t", "--working_threads",
                         help='''number of working threads. The default
                         value is 1. Using a bigger
@@ -387,6 +385,8 @@ try:
     from lizard_ext import JavaScriptReader
     from lizard_ext import PythonReader
     from lizard_ext import xml_output
+    from lizard_ext import json_output
+    from lizard_ext import html_output
 except ImportError:
     pass
 
@@ -849,6 +849,11 @@ def print_result(code_infos, option):
 def print_xml(results, options):
     print(xml_output(list(results), options.verbose))
 
+def print_json(results, options):
+    print(json_output(results, options.verbose))
+
+def print_html(results, options):
+    print(html_output(results, options.verbose))
 
 def get_map_method(working_threads):
     try:
@@ -958,7 +963,13 @@ def lizard_main(argv):
     options = parse_args(argv)
     options.extensions = get_extensions(options.extensions,
                                         options.switchCasesAsOneCondition)
-    printer = print_xml if options.xml else print_result
+    printers = dict(
+        xml = print_xml,
+        json = print_json,
+        html = print_html)
+
+    printer = printers.get(options.format, print_result)
+
     result = analyze(
         options.paths,
         options.exclude,

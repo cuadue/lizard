@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Cyclomatic Complexity Report</title>
+        <style>
+            .code {
+                font-family: monospace;
+            }
+        </style>
+    </head>
+    <body>
+        <h1><a href="http://github.com/cuadue/lizard">Lizard</a>
+            Cyclomatic Complexity Report</h1>
+        {{ timestamp }}
+        <hr>
+        Mean complexity: {{ mean_complexity }}
+        <br>
+        Mean Figure of Merit: {{ mean_fom | int }}
+        <br>
+        Figure of merit:
+            <span title="Cyclomatic Complexity">CC</span><sup>1.5</sup>
+            *
+            <span title="Lines of Code">LOC</span>
+        <hr>
+        <table border=1 cellpadding=5 cellspacing=0>
+            <thead>
+                <tr>
+                    <th title="Cyclomatic Complexity">CC</th>
+                    <th title="Lines of Code">LOC</th>
+                    <th title="Figure of Merit">FOM</th>
+                    <th>Function</th>
+                    <th>File</th>
+                    <th>Lines</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for func in funcs %}
+                <tr>
+                    <td>{{ func.cyclomatic_complexity }}</td>
+                    <td>{{ func.nloc }}</td>
+                    <td>{{ fom(func) | int }}</td>
+                    <td class='code' title="{{ func.long_name }}">
+                        {{ func.name }}
+                    </td>
+                    <td class='code'>{{ func.filename }}</td>
+                    <td>{{ func.start_line }} - {{ func.end_line}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </body>
+</html>
+
