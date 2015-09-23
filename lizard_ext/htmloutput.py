@@ -25,6 +25,7 @@ def html_output(result, verbose):
         template = jinja2.Template(f.read())
 
     return template.render(
+        complexity_threshold = threshold,
         mean_complexity = mean_complexity,
         mean_fom = mean_fom,
         fom = figure_of_merit,
